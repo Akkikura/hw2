@@ -79,15 +79,22 @@ def delete_client(conn, client_id):
 
 # 7 Функция, позволяющая найти клиента по его данным: имени, фамилии, email или телефону.
 
-def find_client(conn, first_name=None, last_name=None, email=None, phones=None):
+def find_client(conn, first_name, last_name, email, phones=None):
+    if first_name == '':
+        first_name = '%'
+    if last_name == '':
+        last_name = '%'
+    if email == '':
+        email = '%'
     with conn.cursor() as cur:
         cur.execute("""
         SELECT *
         FROM client
-        WHERE first_name = %s OR last_name = %s OR email=%s;
+        WHERE first_name LIKE %s AND last_name LIKE %s AND email LIKE %s;
         """, (first_name, last_name, email))
-        print(cur.fetchone())
+        print(cur.fetchall())
         pass
+
 
 
 if __name__ == '__main__':
@@ -96,6 +103,9 @@ if __name__ == '__main__':
         add(conn, 'name123', 'last_name111', 'asdf@gmail.com111', phones=None)
         # add_phone(conn,'1', 99999999999)
         # change_client(conn,'1', name=None, surname=None, email=None, phones=None)
-        find_client(conn,'name')
+        first_name = input('Введите имя человека: ')
+        last_name = input('Введите фамилию человека: ')
+        email = input('Введите email человека: ')
+        find_client(conn,first_name,last_name, email)
         delete_client(conn, '1')
         pass  # вызывайте функции здесь
